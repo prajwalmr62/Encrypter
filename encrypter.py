@@ -56,24 +56,25 @@ else :
     file1=file(filename,"w+") # create doc ,and open it
 option = input("Enter 1 to encrypt \n 2 to decrypt\n 3 to enter data and encrypt\n Your Option :")
 if(option ==1):#encrypt and save to file
-    file2=open(filename+"_enc.txt","w+")
+    file2=open("enc_"+filename,"w+")
     for line in file1:
         file2.write(encrypt(line))
     file2.close()
-    file2=open(filename+"_enc.txt","r")
+    file2=open("enc_"+filename,"r")
     print "This is the content of"+filename+"_enc.txt"
     for line in file2:
         print (line)
     file2.close()
     file1.close()
 if(option ==2): # decrypt and save to file
-    file2=open(filename+"_dec.txt","w+")
+    file2=open("dec_"+filename,"w+")
     file2.write(decrypt(file1.read()))
     file2.close()
-    file2=open(filename+"_dec.txt","r")
-    print "This is the content of"+filename+"_dec.txt"
+    file2=open("dec_"+filename,"r")
+    print "This is the content of dec_"+filename
     for line in file2:
         print (line)
+    file2.close()
     file1.close()
 if(option ==3): # get input and sace to file
     print "Enter your message..\n"

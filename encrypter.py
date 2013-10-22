@@ -61,7 +61,7 @@ if(option ==1):#encrypt and save to file
         file2.write(encrypt(line))
     file2.close()
     file2=open("enc_"+filename,"r")
-    print "This is the content of"+filename+"_enc.txt"
+    print "This is the content of enc_"+filename
     for line in file2:
         print (line)
     file2.close()

@@ -3,9 +3,22 @@
 #or directly enter here, It will encrypt and save it in a diff file.
 #open the same program enter path, run program and it will decrypt it and
 #and will save in a file in same directory.
+#Encrypted files will be saved as .pmr
+#decrypted files will be saved ass .txt
+# Won't work if there is a new line in the file. Still working on it.
+#creates a folder "encrypt" from where the script is running.
+#saves and reads all files from the same directory.
+#so make sure that you'll save all files in the same directory.
 import random as rdm
 import os
 import sys
+def file_open(filename,ftype):
+    filename=filename+ftype
+    global file1
+    if(find(lis,filename)):
+        file1=file(filename,"r+") #Get doc name , and open it
+    else :
+        file1=file(filename,"w+") # create doc ,and open it    
 def encrypt(text): #encrypt function
     num=rdm.randrange(2,5,1) #get a random number from 1 to 5
     encrypted = list()
@@ -50,39 +63,40 @@ lis= os.listdir(".")
 for files in lis:
     print files
 filename=raw_input("Enter file name\n")
-if(find(lis,filename)):
-    file1=file(filename,"r+") #Get doc name , and open it
-else :
-    file1=file(filename,"w+") # create doc ,and open it
 option = input("Enter 1 to encrypt \n 2 to decrypt\n 3 to enter data and encrypt\n Your Option :")
 if(option ==1):#encrypt and save to file
-    file2=open("enc_"+filename,"w+")
+    file_open(filename,".txt")
+    filename=filename+".pmr"
+    file2=open("e_"+filename,"w+")
     for line in file1:
         file2.write(encrypt(line))
     file2.close()
-    file2=open("enc_"+filename,"r")
-    print "This is the content of enc_"+filename
+    file2=open("e_"+filename,"r")
+    print "This is the content of e_"+filename
     for line in file2:
         print (line)
     file2.close()
     file1.close()
 if(option ==2): # decrypt and save to file
-    file2=open("dec_"+filename,"w+")
+    file_open(filename,".pmr")
+    filename=filename+".txt"
+    file2=open("d_"+filename,"w+")
     file2.write(decrypt(file1.read()))
     file2.close()
-    file2=open("dec_"+filename,"r")
-    print "This is the content of dec_"+filename
+    file2=open("d_"+filename,"r")
+    print "This is the content of d_"+filename
     for line in file2:
         print (line)
     file2.close()
     file1.close()
 if(option ==3): # get input and sace to file
     print "Enter your message..\n"
+    file_open(filename,".pmr")
     file2=raw_input()
     file1.write(encrypt(file2))
     file1.close()
-    file1=open(filename,"r")
-    print "This is the content of"+filename
+    file1=open(filename+".pmr","r")
+    print "This is the content of "+filename
     for line in file1:
         print (line)
     file1.close()

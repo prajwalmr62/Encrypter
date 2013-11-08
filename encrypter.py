@@ -1,102 +1,136 @@
+#Current version 0.9a
+
 #Python Encrypter
 #Put something that you want to encrypt and Save it in a file.
 #or directly enter here, It will encrypt and save it in a diff file.
 #open the same program enter path, run program and it will decrypt it and
-#and will save in a file in same directory.
+#will save in a file in same directory.
 #Encrypted files will be saved as .pmr
-#decrypted files will be saved ass .txt
-# Won't work if there is a new line in the file. Still working on it.
+#decrypted files will be saved as .txt
 #creates a folder "encrypt" from where the script is running.
 #saves and reads all files from the same directory.
 #so make sure that you'll save all files in the same directory.
-import random as rdm
-import os
-import sys
-def file_open(filename,ftype):
-    filename=filename+ftype
-    global file1
-    if(find(lis,filename)):
-        file1=file(filename,"r+") #Get doc name , and open it
-    else :
-        file1=file(filename,"w+") # create doc ,and open it    
-def encrypt(text): #encrypt function
-    num=rdm.randrange(2,5,1) #get a random number from 1 to 5
-    encrypted = list()
-    encrypted.append(num)
-    for word in text: # encrypting
-        length=len(word)
-        for i in range(0,length,1):
-            getnu1=ord(word[i])
-            char=chr(getnu1+num)
-            encrypted.append(char)
-    encrypted1=''.join(str(e) for e in encrypted)
-    return encrypted1
 
-def decrypt(text): #decrypting function
-    num=int(text[0]) # get first number
-    decrypted=list()
-    count=0
-    for word in text:
-        if (count):
-            length=len(word)
-            for i in range(0,length,1):
-                getnu1=ord(word[i])
-                char=chr(getnu1-num)
-                decrypted.append(char)
-        count+=1
-    decrypted1=''.join(str(e) for e in decrypted)
-    return decrypted1
+#importing def files
 
-def find(flis,text): # find function for checking file existence
-    for word in flis:
-        if(word==text):
-            return 1
-    return 0
-lis= os.listdir(".") # get list of file and folders
-if not(find(lis,"encrypt")): # check whether encrypt folder exists
-    os.mkdir("encrypt",777)
-    os.chdir("encrypt")
-else :
-    os.chdir("encrypt")
-print os.getcwd()
-lis= os.listdir(".")
-for files in lis:
-    print files
-filename=raw_input("Enter file name\n")
-option = input("Enter 1 to encrypt \n 2 to decrypt\n 3 to enter data and encrypt\n Your Option :")
+import enclib as en
+
+#Get List of all files in encrypt folder
+lis = en.list_files()
+for line in lis:
+    print line
+#Get option value
+option=8
+while(option>7 or not(option)):
+    option=en.getoptions()
+    if (option>7 or not(option)):
+        print "*Enter valid options*"
+
+if(option<5):
+    filename=en.getfilename()
+
+#Options defs
+    
 if(option ==1):#encrypt and save to file
-    file_open(filename,".txt")
-    filename=filename+".pmr"
-    file2=open("e_"+filename,"w+")
-    for line in file1:
-        file2.write(encrypt(line))
-    file2.close()
-    file2=open("e_"+filename,"r")
-    print "This is the content of e_"+filename
-    for line in file2:
-        print (line)
-    file2.close()
-    file1.close()
+    if (en.find(lis,filename+".txt")):
+        password=raw_input("Enter password\n")
+        file1=en.file_open(filename,".txt")
+        filename=filename+".pmr"
+        file2=open("e_"+filename,"w+")
+        line=file1.read()
+        file2.write(en.encrypt(password)+en.encrypt(line))
+        file2.close()
+        file2=open("e_"+filename,"r")
+        print "This is the content of e_"+filename
+        for line in file2:
+            print (line)
+        file2.close()
+        file1.close()
+    else :
+        print "invalid file name.."
+        print "File does  not exists.."
+        print "Please check file name.."
+
+
 if(option ==2): # decrypt and save to file
-    file_open(filename,".pmr")
-    filename=filename+".txt"
-    file2=open("d_"+filename,"w+")
-    file2.write(decrypt(file1.read()))
-    file2.close()
-    file2=open("d_"+filename,"r")
-    print "This is the content of d_"+filename
-    for line in file2:
-        print (line)
-    file2.close()
-    file1.close()
-if(option ==3): # get input and sace to file
+    if(en.find(lis,filename+".pmr")):
+        file1=en.file_open(filename,".pmr")
+        filename=filename+".txt"
+        file2=open("d_"+filename,"w+")
+        password=raw_input("Enter the file password\n")
+        text=str(file1.read())
+        if(en.passwordcheck(password,text)):
+            text=en.remvpas(text,password)
+            file2.write(en.decrypt(text))
+            file2.close()
+            file2=open("d_"+filename,"r")
+            print "This is the content of d_"+filename
+            for line in file2:
+                print (line)
+            file2.close()
+            file1.close()
+        else:
+            print "Invalid password"
+    else:
+        print "Invalid file name.."
+        print "File does not exists.."
+        print "Please check file name"
+
+
+if(option ==3): # get input and save to file
+    if(en.find(lis,filename+".pmr")):
+        print "File name exists"
+        count=1
+        filename2=filename
+        while(en.find(lis,filename2+'.pmr')):
+            filename2=filename+'_'+str(count)
+            count+=1
+        filename=filename2
+        print "now your file renamed to "+filename
+    file1=open(filename+".pmr","w+")
     print "Enter your message..\n"
-    file_open(filename,".pmr")
     file2=raw_input()
-    file1.write(encrypt(file2))
+    password=raw_input("Enter the password\n")
+    file1.write(en.encrypt(password)+en.encrypt(file2))
     file1.close()
     file1=open(filename+".pmr","r")
-    print "This is the content of "+filename
+    print "This is the content of "+filename+".pmr"
     for line in file1:
         print (line)
     file1.close()
+
+if(option==4):
+    if(en.find(lis,filename+".pmr")):
+        file1=en.file_open(filename,".pmr")
+        password=raw_input("Enter the file password\n")
+        text=str(file1.read())
+        if(en.passwordcheck(password,text)):
+            text=en.remvpas(text,password)
+            print "Your decoded message is below"
+            print en.decrypt(text)
+        else :
+            print "Invalid Password!"
+    else :
+        print "Invalid file name.."
+        print "File does not exists"
+
+if(option==5):
+    text=raw_input("Enter coded message\n")
+    password=raw_input("Enter password\n")
+    if(en.passwordcheck(password,text)):
+        text=en.remvpas(text,password)
+        print "Your decoded message is below"
+        print en.decrypt(text)
+    else :
+        print "invalid Password!"
+if(option==6):
+    text=raw_input("Enter your message:")
+    password=raw_input("Enter password:")
+    text=en.encrypt(password)+en.encrypt(text)
+    print "your encrypted message is below"
+    print text
+
+if (option==7):
+    en.print_my_name()
+
+#none=input("press enter to close....") # only for py2exe
